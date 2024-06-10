@@ -38,7 +38,7 @@ public class PrbAltas
        alt.altaRuta("C:/Escritorio", "ProyectoMauro.java", 6, 'A');
        alt.altaRuta("C:/Descarga", "ARchivo2.txt", 6, 'A');
        alt.altaRuta("C:/Documentos", "EDD", 0, 'c');
-
+       mult.desp(r, "1: ");
             Nodo<Elemento> fileNode = mult.buscarNodo(r, "ARchivo2");
             System.out.println(((Elemento)fileNode.getObj()).getRuta());
             //mult.desp(fileNode, "---");

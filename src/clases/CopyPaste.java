@@ -43,18 +43,12 @@ public class CopyPaste {
  
  public void Pegar_directorio(String ruta_objetivo){
      Altas alt = new Altas();
-     //Se inserta el nodo inicial o la carpeta
-     System.out.println(clipboard_nombre_Directorio);
+     String newname = "copy-"+clipboard_nombre_Directorio;
+     System.out.println(newname);
      System.out.println(ruta_objetivo);
-     //alt.altaRuta("(Copy)"+clipboard_nombre_Directorio, ruta_objetivo, 0, 'c');
-     alt.altaRuta_Nodo(ruta_objetivo, this.clipboard_nombre_Directorio, this.clipboard_Directorio);
-     
-     
-     
-     
-     
-     
-     
+     alt.altaRuta(ruta_objetivo, newname, 0, 'c');
+     //alt.altaRuta(newname, ruta_objetivo, 0, 'c');
+     alt.altaRuta_Nodo(ruta_objetivo+"/"+newname, this.clipboard_nombre_Directorio, this.clipboard_Directorio);
  }
  
  
