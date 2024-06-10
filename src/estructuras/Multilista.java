@@ -265,8 +265,6 @@ public class Multilista<T>
             {
                 //System.out.println("ENCONTRADO!!!: "+((Elemento)resultado.getObj()).getNombre());
                 System.out.println("ENCONTRADO EN !!!: " + ((Elemento) resultado.getAbj().getObj()).getRuta());
-                Elemento elem=(Elemento)resultado.getObj();
-                tableModel.addRow(new Object[]{elem.getNombre(), elem.getTamanio(), elem.getTipo(), elem.getAutor(), elem.getFecha()});
                 resultado = resultado.getAbj(); // Explora el nodo a pegar.
                 return resultado; // Si encontramos el nodo en los subniveles, lo retornamos
             }
@@ -360,4 +358,70 @@ public void desp3(Nodo r)
 
     }
 
+public void desp4(Nodo r,DefaultTableModel tableModel)
+
+    {
+
+        r = r.getAbj();
+
+        if (r == null)
+
+        {
+
+            return;
+
+        }
+ 
+        Nodo start = r;
+
+        do
+
+        {
+
+//            Elemento elemento=(Elemento)r.getObj();
+
+//            System.out.println("Autor: "+elemento.getAutor());
+
+//            System.out.println("Ruta: "+elemento.getRuta());
+
+            System.out.println(r.getEtq());
+            Elemento elem=(Elemento)r.getObj();
+                tableModel.addRow(new Object[]{elem.getNombre(), elem.getTamanio(), elem.getTipo(), elem.getAutor(), elem.getFecha()});
+            r = r.getSig();
+            if (r == start)
+
+            {
+
+                return;  // Salir si se detecta un ciclo
+
+            }
+
+        } while (r != start && r != null);  // Continuar mientras no se regrese al inicio o se encuentre un nodo nulo
+
+    }
+
+public void desp5(Nodo r, DefaultTableModel tableModel)
+    {
+        if (r == null)
+        {
+            return;
+        }
+
+        Nodo start = r;
+        do
+        {
+//            Elemento elemento=(Elemento)r.getObj();
+//            System.out.println("Autor: "+elemento.getAutor());
+//            System.out.println("Ruta: "+elemento.getRuta());
+            System.out.println(r.getEtq());
+            Elemento elem=(Elemento)r.getObj();
+            tableModel.addRow(new Object[]{elem.getNombre(), elem.getTamanio(), elem.getTipo(), elem.getAutor(), elem.getFecha()});
+            desp5(r.getAbj(),tableModel);  // Recursividad para manejar subniveles
+            r = r.getSig();
+            if (r == start)
+            {
+                return;  // Salir si se detecta un ciclo
+            }
+        } while (r != start && r != null);  // Continuar mientras no se regrese al inicio o se encuentre un nodo nulo
+    }
 }

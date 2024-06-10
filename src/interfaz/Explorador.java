@@ -1,10 +1,12 @@
 package interfaz;
+
 import clases.Altas;
 import clases.Bajas;
 import clases.CopyPaste;
 import clases.Elemento;
 import estructuras.Multilista;
 import estructuras.Nodo;
+import estructuras.TablaHash;
 
 import javax.swing.*;
 
@@ -27,8 +29,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
- 
-public class Explorador extends JFrame {
+
+public class Explorador extends JFrame
+{
 
     private JTree fileTree;
 
@@ -36,10 +39,12 @@ public class Explorador extends JFrame {
 
     private DefaultTableModel tableModel;
     public static Nodo r = null;
-    public static  Multilista mult = new Multilista();
+    public static Multilista mult = new Multilista();
     public static List<Elemento> subElementos = new ArrayList<>();
- 
-    public Explorador() {
+    public static TablaHash th = new TablaHash();
+
+    public Explorador()
+    {
         cargaDatos();
 
         initComponents();
@@ -49,29 +54,38 @@ public class Explorador extends JFrame {
         initializeFileTable();
 
     }
- 
-    private void initComponents() {
+
+    private void initComponents()
+    {
 
         JSplitPane splitPane = new JSplitPane();
 
         fileTree = new JTree();
 
         fileTable = new JTable();
- 
+        JButton searchButton = new JButton("Buscar");  // Crear el botón de búsqueda
+
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        splitPane.setLeftComponent(new JScrollPane(fileTree));
+        // Configurar el botón y su evento
+        searchButton.addActionListener(e -> onSearchButtonClick());
 
+        JPanel controlPanel = new JPanel(); // Panel para contener el botón
+        controlPanel.add(searchButton);
+
+        splitPane.setLeftComponent(new JScrollPane(fileTree));
         splitPane.setRightComponent(new JScrollPane(fileTable));
 
         getContentPane().add(splitPane, BorderLayout.CENTER);
- 
+        getContentPane().add(controlPanel, BorderLayout.NORTH);  // Añadir el panel de control en la parte superior
+
         pack();
 
     }
- 
-    private void initializeFileTree() {
-       
+
+    private void initializeFileTree()
+    {
+
         Elemento rootElemento = createSampleFileSystem(); // Método para crear un sistema de archivos de ejemplo
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootElemento);
@@ -79,19 +93,24 @@ public class Explorador extends JFrame {
         createChildren(root, rootElemento);
 
         fileTree.setModel(new DefaultTreeModel(root));
- 
-        fileTree.addTreeSelectionListener(new TreeSelectionListener() {
+
+        fileTree.addTreeSelectionListener(new TreeSelectionListener()
+        {
 
             @Override
 
-            public void valueChanged(TreeSelectionEvent e) {
+            public void valueChanged(TreeSelectionEvent e)
+            {
 
                 DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) fileTree.getLastSelectedPathComponent();
-               
-                if (selectedNode != null) {
+
+                if (selectedNode != null)
+                {
                     //aqui poner logica para desplegar lo de las carpetas
-                    System.out.println("nombre "+extraerPalabraEntreParentesis(selectedNode.toString()));
-                    mult.buscarNodoLis(r, extraerPalabraEntreParentesis(selectedNode.toString()), tableModel);
+                    tableModel.setRowCount(0);
+                    System.out.println("nombre " + extraerPalabraEntreParentesis(selectedNode.toString()));
+                    Nodo nuevo = mult.buscarNodo2(r, extraerPalabraEntreParentesis(selectedNode.toString()));
+                    mult.desp5(nuevo, tableModel);
                 }
 
             }
@@ -99,22 +118,23 @@ public class Explorador extends JFrame {
         });
 
     }
- 
-    private void createChildren(DefaultMutableTreeNode node, Elemento elemento) {
+
+    private void createChildren(DefaultMutableTreeNode node, Elemento elemento)
+    {
 
         // Aquí deberías agregar la lógica para obtener las subcarpetas y archivos de 'elemento'
-
         // Como ejemplo simple, crearemos subcarpetas y archivos de forma manual
-
         List<Elemento> subElementos = createSubElementos(elemento);
 
-        for (Elemento subElemento : subElementos) {
+        for (Elemento subElemento : subElementos)
+        {
 
             DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(subElemento);
 
             node.add(childNode);
 
-            if (subElemento.getTipo() == 'C') {
+            if (subElemento.getTipo() == 'C')
+            {
 
                 createChildren(childNode, subElemento);
 
@@ -123,8 +143,9 @@ public class Explorador extends JFrame {
         }
 
     }
- 
-    private void initializeFileTable() {
+
+    private void initializeFileTable()
+    {
 
         tableModel = new DefaultTableModel();
 
@@ -141,62 +162,59 @@ public class Explorador extends JFrame {
         fileTable.setModel(tableModel);
 
     }
- 
-    private void updateFileTable(Elemento carpeta) {
+
+    private void updateFileTable(Elemento carpeta)
+    {
 
         // Aquí deberías agregar la lógica para obtener los elementos dentro de 'carpeta'
-
         // Como ejemplo simple, crearemos archivos de forma manual
-
         List<Elemento> archivos = createSubElementos(carpeta);
 
         tableModel.setRowCount(0);
-        
-        for (Elemento archivo : archivos) {
+
+        for (Elemento archivo : archivos)
+        {
 
 //            if (archivo.getTipo() == 'A') {
+            tableModel.addRow(new Object[]
+            {
 
-                tableModel.addRow(new Object[]{
+                archivo.getNombre(),
+                archivo.getTamanio(),
+                archivo.getExtencion(),
+                archivo.getAutor(),
+                archivo.getFecha()
 
-                        archivo.getNombre(),
-
-                        archivo.getTamanio(),
-
-                        archivo.getExtencion(),
-
-                        archivo.getAutor(),
-
-                        archivo.getFecha()
-
-                });
+            });
 
 //            }
-
         }
 
     }
- 
-    private Elemento createSampleFileSystem() {
+
+    private Elemento createSampleFileSystem()
+    {
 
         Elemento root = new Elemento("Root", "", 'C', 0, "C:\\Root");
 
         return root;
 
     }
- 
-    private List<Elemento> createSubElementos(Elemento elemento) {
 
-       
+    private List<Elemento> createSubElementos(Elemento elemento)
+    {
 
         mult.desp3(r);
 
         return subElementos;
 
     }
- 
-    public static void main(String[] args) {
 
-        SwingUtilities.invokeLater(() -> {
+    public static void main(String[] args)
+    {
+
+        SwingUtilities.invokeLater(() ->
+        {
 
             new Explorador().setVisible(true);
 
@@ -204,60 +222,68 @@ public class Explorador extends JFrame {
 
     }
 
-    
     public void cargaDatos()
     {
         Altas alt = new Altas();
-       Bajas bj = new Bajas();
-       CopyPaste cp = new CopyPaste();
-       
-       alt.altaRuta("C:", "C:", 0, 'c');
-       alt.altaRuta("C:", "Documentos", 0, 'c');
-       alt.altaRuta("C:/Documentos", "archivo.txt", 6, 'A');
-       alt.altaRuta("C:", "Descarga", 0, 'c');
-       alt.altaRuta("C:", "Musica", 0, 'c');
-       alt.altaRuta("C:/Musica", "PerdidoEnLaOscuridadJoseJose.mp3", 6, 'A');
-       alt.altaRuta("C:/Musica", "Carpeta_Sub", 6, 'c');
-       alt.altaRuta("C:/Musica/Carpeta_Sub", "Archivo_random.txt", 6, 'A');
-       alt.altaRuta("C:", "Escritorio", 0, 'c');
-       alt.altaRuta("C:/Escritorio", "ProyectoMauro.java", 6, 'A');
-       alt.altaRuta("C:/Descarga", "ARchivo2.txt", 6, 'A');
-       alt.altaRuta("C:/Documentos", "EDD", 0, 'c');
-       mult.desp(r, "1: ");
-            Nodo<Elemento> fileNode = mult.buscarNodo(r, "ARchivo2");
-            System.out.println(((Elemento)fileNode.getObj()).getRuta());
-            //mult.desp(fileNode, "---");
-            Nodo<Elemento> dirNode = mult.buscarNodo(r, "Musica"); 
-            System.out.println(((Elemento)dirNode.getObj()).getRuta());
-            //mult.desp(dirNode, "**\t");
-            cp.Copiar_archivo(((Elemento)fileNode.getObj()).getRuta(), "ARchivo2",((Elemento)fileNode.getObj()).getExtencion());
-            
-            cp.Pegar_Archivo("C:/Musica/Carpeta_Sub");
-            
-            cp.Copiar_directorio(((Elemento)dirNode.getObj()).getRuta(), "Musica");
-            cp.Pegar_directorio("C:/Escritorio");
+        Bajas bj = new Bajas();
+        CopyPaste cp = new CopyPaste();
+
+        alt.altaRuta("C:", "C:", 0, 'c');
+        alt.altaRuta("C:", "Documentos", 0, 'c');
+        alt.altaRuta("C:/Documentos", "archivo.txt", 6, 'A');
+        alt.altaRuta("C:", "Descarga", 0, 'c');
+        alt.altaRuta("C:", "Musica", 0, 'c');
+        alt.altaRuta("C:/Musica", "PerdidoEnLaOscuridadJoseJose.mp3", 6, 'A');
+        alt.altaRuta("C:/Musica", "Carpeta_Sub", 6, 'c');
+        alt.altaRuta("C:/Musica/Carpeta_Sub", "Archivo_random.txt", 6, 'A');
+        alt.altaRuta("C:", "Escritorio", 0, 'c');
+        alt.altaRuta("C:/Escritorio", "ProyectoMauro.java", 6, 'A');
+        alt.altaRuta("C:/Descarga", "ARchivo2.txt", 6, 'A');
+        alt.altaRuta("C:/Documentos", "EDD", 0, 'c');
+        mult.desp(r, "1: ");
+        Nodo<Elemento> fileNode = mult.buscarNodo(r, "ARchivo2");
+        System.out.println(((Elemento) fileNode.getObj()).getRuta());
+        //mult.desp(fileNode, "---");
+        Nodo<Elemento> dirNode = mult.buscarNodo(r, "Musica");
+        System.out.println(((Elemento) dirNode.getObj()).getRuta());
+        //mult.desp(dirNode, "**\t");
+        cp.Copiar_archivo(((Elemento) fileNode.getObj()).getRuta(), "ARchivo2", ((Elemento) fileNode.getObj()).getExtencion());
+
+        cp.Pegar_Archivo("C:/Musica/Carpeta_Sub");
+
+        cp.Copiar_directorio(((Elemento) dirNode.getObj()).getRuta(), "Musica");
+        cp.Pegar_directorio("C:/Escritorio");
         mult.desp(r, "etq: ");
 
-       Elemento elemento = bj.bajaElimina("Archivo_random");
-        if (elemento!=null) {
-            System.out.println("Elemento: "+elemento.getAutor());
-        } else {
+        Elemento elemento = bj.bajaElimina("Archivo_random");
+        if (elemento != null)
+        {
+            System.out.println("Elemento: " + elemento.getAutor());
+        } else
+        {
             System.out.println("No elimno el hd****");
         }
-       
+
         System.out.println("-----------------");
-       
-        mult.desp(r,"etq: ");
-     }
-    
-    public String extraerPalabraEntreParentesis(String texto) {
+
+        mult.desp(r, "etq: ");
+    }
+
+    public String extraerPalabraEntreParentesis(String texto)
+    {
         // Usamos una expresión regular para buscar contenido entre paréntesis
         Pattern pattern = Pattern.compile("\\(([^)]+)\\)");
         Matcher matcher = pattern.matcher(texto);
-        if (matcher.find()) {
+        if (matcher.find())
+        {
             // Retorna el primer grupo capturado, que es la palabra entre paréntesis
             return matcher.group(1);
         }
         return null; // No se encontraron paréntesis con contenido
     }
+
+    private void onSearchButtonClick()
+    {
+        new Busqueda().setVisible(true);
     }
+}

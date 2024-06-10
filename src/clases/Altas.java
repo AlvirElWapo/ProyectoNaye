@@ -1,8 +1,8 @@
 package clases;
 
-import static clases.PrbAltas.mult;
+import static interfaz.Explorador.mult;
 import static interfaz.Explorador.r;
-import static clases.PrbAltas.th;
+import static interfaz.Explorador.th;
 import estructuras.Nodo;
 import estructuras.NodoArbol;
 

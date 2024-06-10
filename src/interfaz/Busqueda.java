@@ -3,7 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package interfaz;
-
+import clases.Elemento;
+import estructuras.Nodo;
+import estructuras.NodoArbol;
+import static interfaz.Explorador.th;
 /**
  *
  * @author chenc
@@ -45,6 +48,13 @@ public class Busqueda extends javax.swing.JFrame
         jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 240, 40));
 
         jButton1.setText("Buscar");
+        jButton1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton1ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 50, 110, 40));
 
         jLabel2.setText("jLabel2");
@@ -63,6 +73,26 @@ public class Busqueda extends javax.swing.JFrame
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
+    {//GEN-HEADEREND:event_jButton1ActionPerformed
+        if (!jTextField1.getText().isEmpty())
+        {
+            NodoArbol nodoArbol=th.busca(jTextField1.getText());
+            if (nodoArbol!=null)
+            {
+                Nodo nodo=(Nodo) nodoArbol.getObj();
+                Elemento nueEle = (Elemento)nodo.getObj();
+                jLabel2.setText("Nombre: "+nueEle.getNombre()+" Autor: "+nueEle.getAutor() );
+            } else
+            {
+                System.out.println("Dato no econtrado");
+            }
+        } else
+        {
+            System.out.println("Vacio");
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
