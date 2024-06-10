@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
  
 public class Explorador extends JFrame {
 
@@ -88,8 +90,8 @@ public class Explorador extends JFrame {
                
                 if (selectedNode != null) {
                     //aqui poner logica para desplegar lo de las carpetas
-
-                    mult.buscarNodoLis(r, selectedNode.toString(), tableModel);
+                    System.out.println("nombre "+extraerPalabraEntreParentesis(selectedNode.toString()));
+                    mult.buscarNodoLis(r, extraerPalabraEntreParentesis(selectedNode.toString()), tableModel);
                 }
 
             }
@@ -247,4 +249,15 @@ public class Explorador extends JFrame {
        
         mult.desp(r,"etq: ");
      }
+    
+    public String extraerPalabraEntreParentesis(String texto) {
+        // Usamos una expresión regular para buscar contenido entre paréntesis
+        Pattern pattern = Pattern.compile("\\(([^)]+)\\)");
+        Matcher matcher = pattern.matcher(texto);
+        if (matcher.find()) {
+            // Retorna el primer grupo capturado, que es la palabra entre paréntesis
+            return matcher.group(1);
+        }
+        return null; // No se encontraron paréntesis con contenido
+    }
     }
