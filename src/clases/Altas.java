@@ -1,7 +1,7 @@
 package clases;
 
 import static clases.PrbAltas.mult;
-import static clases.PrbAltas.r;
+import static interfaz.Explorador.r;
 import static clases.PrbAltas.th;
 import estructuras.Nodo;
 import estructuras.NodoArbol;

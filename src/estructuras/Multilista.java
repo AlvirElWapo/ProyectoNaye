@@ -1,6 +1,9 @@
 package estructuras;
 
 import clases.Elemento;
+import static interfaz.Explorador.subElementos;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
 
 public class Multilista<T>
 {
@@ -41,32 +44,41 @@ public class Multilista<T>
             return r;
         }
     }
-    
-    public Nodo eliminarNodo(Nodo r, String etiqueta) {
-        if (r == null) {
+
+    public Nodo eliminarNodo(Nodo r, String etiqueta)
+    {
+        if (r == null)
+        {
             return null; // Si el nodo inicial es nulo, retornamos null
         }
 
         Nodo start = r; // Nodo de inicio para detectar ciclos
         Nodo previo = null; // Nodo previo para poder modificar enlaces
 
-        do {
-            if (r.getEtq().equals(etiqueta)) {
-                if (previo == null) {
+        do
+        {
+            if (r.getEtq().equals(etiqueta))
+            {
+                if (previo == null)
+                {
                     // Si el nodo a eliminar es el primero, manejamos el caso de ciclo
                     Nodo ultimo = r;
-                    while (ultimo.getSig() != start && ultimo.getSig() != r) {
+                    while (ultimo.getSig() != start && ultimo.getSig() != r)
+                    {
                         ultimo = ultimo.getSig();
                     }
-                    if (ultimo == r) {
+                    if (ultimo == r)
+                    {
                         // Si sólo hay un nodo, retornamos null
                         return null;
-                    } else {
+                    } else
+                    {
                         // Si hay más de un nodo, ajustamos el enlace del último nodo
                         ultimo.setSig(r.getSig());
                         return r.getSig(); // Retornamos el nuevo inicio
                     }
-                } else {
+                } else
+                {
                     // Nodo a eliminar está en el medio o final
                     previo.setSig(r.getSig());
                     return start; // Retornamos el inicio original
@@ -78,7 +90,8 @@ public class Multilista<T>
 
             previo = r;
             r = r.getSig(); // Avanzamos al siguiente nodo en el nivel actual
-            if (r == start) {
+            if (r == start)
+            {
                 return start; // Salimos si detectamos un ciclo
             }
         } while (r != start && r != null); // Continuar mientras no se regrese al inicio o se encuentre un nodo nulo
@@ -135,7 +148,7 @@ public class Multilista<T>
         obj.r = r;
         return obj.busca(s);
     }
-    
+
     public Nodo buscaBajas(Nodo r, String s)
     {
         ListaDobleCircular obj = new ListaDobleCircular();
@@ -166,79 +179,184 @@ public class Multilista<T>
         } while (r != start && r != null);  // Continuar mientras no se regrese al inicio o se encuentre un nodo nulo
     }
 
-    public Nodo buscarNodo(Nodo r, String etiqueta) {
-    if (r == null) {
-        return null; // Si el nodo inicial es nulo, retornamos null
+    public Nodo buscarNodo(Nodo r, String etiqueta)
+    {
+        if (r == null)
+        {
+            return null; // Si el nodo inicial es nulo, retornamos null
+        }
+
+        Nodo start = r; // Nodo de inicio para detectar ciclos
+        do
+        {
+            if (r.getEtq().equals(etiqueta))
+            {
+                return r; // Si encontramos el nodo con la etiqueta deseada, lo retornamos
+            }
+
+            Nodo resultado = buscarNodo(r.getAbj(), etiqueta); // Llamada recursiva para subniveles
+            if (resultado != null)
+            {
+                return resultado; // Si encontramos el nodo en los subniveles, lo retornamos
+            }
+
+            r = r.getSig(); // Avanzamos al siguiente nodo en el nivel actual
+            if (r == start)
+            {
+                return null; // Salimos si detectamos un ciclo
+            }
+        } while (r != start && r != null); // Continuar mientras no se regrese al inicio o se encuentre un nodo nulo
+
+        return null; // Si no se encuentra el nodo, retornamos null
     }
 
-    Nodo start = r; // Nodo de inicio para detectar ciclos
-    do {
-        if (r.getEtq().equals(etiqueta)) {
-            return r; // Si encontramos el nodo con la etiqueta deseada, lo retornamos
+    public Nodo buscarNodo2(Nodo r, String etiqueta)
+    {
+        if (r == null)
+        {
+            return null; // Si el nodo inicial es nulo, retornamos null
         }
-        
-        Nodo resultado = buscarNodo(r.getAbj(), etiqueta); // Llamada recursiva para subniveles
-        if (resultado != null) {
-            return resultado; // Si encontramos el nodo en los subniveles, lo retornamos
-        }
-        
-        r = r.getSig(); // Avanzamos al siguiente nodo en el nivel actual
-        if (r == start) {
-            return null; // Salimos si detectamos un ciclo
-        }
-    } while (r != start && r != null); // Continuar mientras no se regrese al inicio o se encuentre un nodo nulo
 
-    return null; // Si no se encuentra el nodo, retornamos null
-}
+        Nodo start = r; // Nodo de inicio para detectar ciclos
+        do
+        {
+            if (r.getEtq().equals(etiqueta))
+            {
+                return r; // Si encontramos el nodo con la etiqueta deseada, lo retornamos
+            }
 
-    
-    
-    public Nodo buscarNodo2(Nodo r, String etiqueta) {
-    if (r == null) {
-        return null; // Si el nodo inicial es nulo, retornamos null
+            Nodo resultado = buscarNodo2(r.getAbj(), etiqueta); // Llamada recursiva para subniveles
+            if (resultado != null)
+            {
+                //System.out.println("ENCONTRADO!!!: "+((Elemento)resultado.getObj()).getNombre());
+                System.out.println("ENCONTRADO EN !!!: " + ((Elemento) resultado.getAbj().getObj()).getRuta());
+                resultado = resultado.getAbj(); // Explora el nodo a pegar.
+                return resultado; // Si encontramos el nodo en los subniveles, lo retornamos
+            }
+
+            r = r.getSig(); // Avanzamos al siguiente nodo en el nivel actual
+            if (r == start)
+            {
+                return null; // Salimos si detectamos un ciclo
+            }
+        } while (r != start && r != null); // Continuar mientras no se regrese al inicio o se encuentre un nodo nulo
+
+        return null; // Si no se encuentra el nodo, retornamos null
     }
 
-    Nodo start = r; // Nodo de inicio para detectar ciclos
-    do {
-        if (r.getEtq().equals(etiqueta)) {
-            return r; // Si encontramos el nodo con la etiqueta deseada, lo retornamos
+    
+    public Nodo buscarNodoLis(Nodo r, String etiqueta,DefaultTableModel tableModel)
+    {
+        if (r == null)
+        {
+            return null; // Si el nodo inicial es nulo, retornamos null
         }
-        
-        Nodo resultado = buscarNodo2(r.getAbj(), etiqueta); // Llamada recursiva para subniveles
-        if (resultado != null) {
-            //System.out.println("ENCONTRADO!!!: "+((Elemento)resultado.getObj()).getNombre());
-            System.out.println("ENCONTRADO EN !!!: "+((Elemento)resultado.getAbj().getObj()).getRuta());
-            resultado = resultado.getAbj(); // Explora el nodo a pegar.
-            return resultado; // Si encontramos el nodo en los subniveles, lo retornamos
+
+        Nodo start = r; // Nodo de inicio para detectar ciclos
+        do
+        {
+            if (r.getEtq().equals(etiqueta))
+            {
+                return r; // Si encontramos el nodo con la etiqueta deseada, lo retornamos
+            }
+
+            Nodo resultado = buscarNodo2(r.getAbj(), etiqueta); // Llamada recursiva para subniveles
+            if (resultado != null)
+            {
+                //System.out.println("ENCONTRADO!!!: "+((Elemento)resultado.getObj()).getNombre());
+                System.out.println("ENCONTRADO EN !!!: " + ((Elemento) resultado.getAbj().getObj()).getRuta());
+                //tableModel.addRow(new Object[]{nombre, tamaño, tipo, autor, fecha});
+                resultado = resultado.getAbj(); // Explora el nodo a pegar.
+                return resultado; // Si encontramos el nodo en los subniveles, lo retornamos
+            }
+
+            r = r.getSig(); // Avanzamos al siguiente nodo en el nivel actual
+            if (r == start)
+            {
+                return null; // Salimos si detectamos un ciclo
+            }
+        } while (r != start && r != null); // Continuar mientras no se regrese al inicio o se encuentre un nodo nulo
+
+        return null; // Si no se encuentra el nodo, retornamos null
+    }
+    
+    public void desp2(Nodo r,DefaultTableModel model)
+
+    {
+
+        if (r == null)
+
+        {
+
+            return;
+
         }
-        
-        r = r.getSig(); // Avanzamos al siguiente nodo en el nivel actual
-        if (r == start) {
-            return null; // Salimos si detectamos un ciclo
+
+        Nodo start = r;
+
+        do
+
+        {
+
+//            Elemento elemento=(Elemento)r.getObj();
+//            System.out.println("Autor: "+elemento.getAutor());
+//            System.out.println("Ruta: "+elemento.getRuta());
+            //model.addRow(((Elemento) r.getObj()).getRuta());
+
+            r = r.getSig();
+
+            if (r == start)
+
+            {
+
+                return;  // Salir si se detecta un ciclo
+
+            }
+
+        } while (r != start && r != null);  // Continuar mientras no se regrese al inicio o se encuentre un nodo nulo
+
+    }
+    
+public void desp3(Nodo r)
+
+    {
+
+        r = r.getAbj();
+
+        if (r == null)
+
+        {
+
+            return;
+
         }
-    } while (r != start && r != null); // Continuar mientras no se regrese al inicio o se encuentre un nodo nulo
+ 
+        Nodo start = r;
 
-    return null; // Si no se encuentra el nodo, retornamos null
-}
+        do
 
+        {
 
+//            Elemento elemento=(Elemento)r.getObj();
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+//            System.out.println("Autor: "+elemento.getAutor());
+
+//            System.out.println("Ruta: "+elemento.getRuta());
+
+            System.out.println(r.getEtq());
+            subElementos.add((Elemento)r.getObj());
+            r = r.getSig();
+
+            if (r == start)
+
+            {
+
+                return;  // Salir si se detecta un ciclo
+
+            }
+
+        } while (r != start && r != null);  // Continuar mientras no se regrese al inicio o se encuentre un nodo nulo
+
+    }
+
 }
