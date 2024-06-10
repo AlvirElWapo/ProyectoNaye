@@ -87,8 +87,9 @@ public class Explorador extends JFrame {
                 DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) fileTree.getLastSelectedPathComponent();
                
                 if (selectedNode != null) {
+                    //aqui poner logica para desplegar lo de las carpetas
 
-                    
+                    mult.buscarNodoLis(r, selectedNode.toString(), tableModel);
                 }
 
             }

@@ -265,7 +265,8 @@ public class Multilista<T>
             {
                 //System.out.println("ENCONTRADO!!!: "+((Elemento)resultado.getObj()).getNombre());
                 System.out.println("ENCONTRADO EN !!!: " + ((Elemento) resultado.getAbj().getObj()).getRuta());
-                //tableModel.addRow(new Object[]{nombre, tamaño, tipo, autor, fecha});
+                Elemento elem=(Elemento)resultado.getObj();
+                tableModel.addRow(new Object[]{elem.getNombre(), elem.getTamanio(), elem.getTipo(), elem.getAutor(), elem.getFecha()});
                 resultado = resultado.getAbj(); // Explora el nodo a pegar.
                 return resultado; // Si encontramos el nodo en los subniveles, lo retornamos
             }
