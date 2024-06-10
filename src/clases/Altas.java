@@ -2,7 +2,9 @@ package clases;
 
 import static clases.PrbAltas.mult;
 import static clases.PrbAltas.r;
+import static clases.PrbAltas.th;
 import estructuras.Nodo;
+import estructuras.NodoArbol;
 
 public class Altas 
 {
@@ -37,7 +39,8 @@ public class Altas
         
         Elemento nElemento = new Elemento(nombre, extension, tipo, tamanio, ruta);
         Nodo nuevoNodo = new Nodo(nElemento,nombre);
-        
+        NodoArbol nodoArbol = new NodoArbol(nuevoNodo.getEtq(),nuevoNodo);
+        th.inserta(nodoArbol);
         //Nodo busca = mult.busca(r, nombre);
         if (r == null) 
         {

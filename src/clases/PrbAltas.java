@@ -7,6 +7,8 @@ package clases;
 import estructuras.Multilista;
 import estructuras.Nodo;
 import clases.*;
+import estructuras.NodoArbol;
+import estructuras.TablaHash;
 
 /**
  *
@@ -16,6 +18,8 @@ public class PrbAltas
 {
     public static Nodo r = null;
     public static  Multilista mult = new Multilista();
+    public static TablaHash th = new TablaHash();
+    
     /**
      * @param args the command line arguments
      */
@@ -63,5 +67,22 @@ public class PrbAltas
         System.out.println("-----------------");
        
         mult.desp(r,"etq: ");
+        
+        
+        System.out.println("----Busqueda de en tablas hash ------");
+        NodoArbol nodoBusqueda=th.busca("Musica");
+        Nodo nodo=(Nodo)nodoBusqueda.getObj();
+        System.out.println("Elemento: "+nodo.getEtq());
+        
+        Elemento ele= (Elemento) nodo.getObj();
+        
+        if (ele!=null)
+        {
+            System.out.println("Autor: "+ele.getAutor());
+        } else
+        {
+            System.out.println("NO hay datos");
+        }
+        
      }
 }
