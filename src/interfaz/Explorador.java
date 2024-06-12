@@ -1,89 +1,347 @@
 package interfaz;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
+import clases.Altas;
+import clases.Bajas;
+import clases.CopyPaste;
+import clases.Elemento;
+import estructuras.Multilista;
+import estructuras.Nodo;
+import estructuras.TablaHash;
 
-/**
- * @author Daniel
- */
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class Explorador implements Serializable{
+public class Explorador extends JFrame 
+{
+
+    private JTree fileTree;
+    private JTable fileTable;
+    private DefaultTableModel tableModel;
+    public static Nodo r = null;
+    public static Multilista mult = new Multilista();
+    public static List<Elemento> subElementos = new ArrayList<>();
+    public static TablaHash th = new TablaHash();
+
+    public Explorador() 
+    {
+        cargaDatos();
+        initComponents();
+        initializeFileTree();
+        initializeFileTable();
+    }
+
+    private void initComponents() 
+    {
+        JSplitPane splitPane = new JSplitPane();
+        fileTree = new JTree();
+        fileTable = new JTable();
+        
+        JButton searchButton = new JButton("Buscar"); 
+        searchButton.setPreferredSize(new Dimension(120, 30));
+        
+        JButton newButton = new JButton("Nuevo");
+        newButton.setPreferredSize(new Dimension(120, 30));
+        
+        JButton deleteButton = new JButton();
+        deleteButton.setPreferredSize(new Dimension(120, 30));
+        
+        ImageIcon searchIcon = new ImageIcon("src/recursos/search_icon.png");
+        Image searchImage = searchIcon.getImage();
+        Image searchImageScaled = searchImage.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH); // Cambiar dimensiones aquí
+        searchIcon = new ImageIcon(searchImageScaled);
+        searchButton.setIcon(searchIcon);
+        
+        ImageIcon addIcon = new ImageIcon("src/recursos/add_icon.png");
+        Image addImage = addIcon.getImage();
+        Image addImageScaled = addImage.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH); // Cambiar dimensiones aquí
+        addIcon = new ImageIcon(addImageScaled);
+        newButton.setIcon(addIcon);
+        
+        ImageIcon deleteIcon = new ImageIcon("src/recursos/delete_icon.png");
+        Image deleteImage = deleteIcon.getImage();
+        Image deleteImageScaled = deleteImage.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH); // Cambiar dimensiones aquí
+        deleteIcon = new ImageIcon(deleteImageScaled);
+        deleteButton.setIcon(deleteIcon);
+
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        // Configurar el botón y su evento
+        searchButton.addActionListener(e -> onSearchButtonClick());
+        searchButton.setBackground(new Color(47, 79, 79));
+        searchButton.setForeground(Color.WHITE);
+        searchButton.setFocusPainted(false);
+
+        newButton.addActionListener(e -> onNewButtonClick());
+        newButton.setBackground(new Color(47, 79, 79));
+        newButton.setForeground(Color.WHITE);
+        newButton.setFocusPainted(false);
+        
+        deleteButton.addActionListener(e -> 
+        {
+            int selectedOption = JOptionPane.showConfirmDialog(null, "¿Estás seguro de que quieres eliminar este elemento?", "Confirmación", JOptionPane.YES_NO_OPTION);
+            if (selectedOption == JOptionPane.YES_OPTION) 
+            {
+                onDeleteButtonClick();
+            }
+        });
+
+        deleteButton.setBackground(new Color(47, 79, 79));
+        deleteButton.setForeground(Color.WHITE);
+        deleteButton.setFocusPainted(false);
+        
+
+        JPanel controlPanel = new JPanel();
+        controlPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        controlPanel.add(searchButton);
+        controlPanel.add(newButton);
+        controlPanel.add(deleteButton);
+        controlPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        controlPanel.setBackground(new Color(47, 79, 79));
+
+        splitPane.setLeftComponent(new JScrollPane(fileTree));
+        splitPane.setRightComponent(new JScrollPane(fileTable));
+
+        getContentPane().add(splitPane, BorderLayout.CENTER);
+        getContentPane().add(controlPanel, BorderLayout.NORTH);  // Añadir el panel de control en la parte superior
+        
+
+        // Configuración de la apariencia de los componentes
+        fileTable.setBackground(new Color(240, 248, 255));
+        fileTable.setForeground(Color.BLACK);
+
+        pack();
+    }
+
+    private void initializeFileTree() 
+    {
+        Elemento rootElemento = createSampleFileSystem(); // Método para crear un sistema de archivos de ejemplo
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootElemento);
+        createChildren(root, rootElemento);
+        fileTree.setModel(new DefaultTreeModel(root));
+        
+        // Crear el popup menu
+        JPopupMenu treePopupMenu = new JPopupMenu();
+        JMenuItem copy = new JMenuItem("Copiar");
+        JMenuItem paste = new JMenuItem("Pegar");
+        treePopupMenu.add(copy);
+        treePopupMenu.add(paste);
+        
+        fileTree.addTreeSelectionListener(new TreeSelectionListener() 
+        {
+            @Override
+            public void valueChanged(TreeSelectionEvent e) 
+            {
+                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) fileTree.getLastSelectedPathComponent();
+                if (selectedNode != null) 
+                {
+                    // Aquí poner lógica para desplegar lo de las carpetas
+                    tableModel.setRowCount(0);
+                    System.out.println("nombre " + extraerPalabraEntreParentesis(selectedNode.toString()));
+                    Nodo nuevo = mult.buscarNodo2(r, extraerPalabraEntreParentesis(selectedNode.toString()));
+                    mult.desp5(nuevo, tableModel);
+                }
+            }
+        });
+        
+        fileTree.addMouseListener(new MouseAdapter() 
+        {
+        @Override
+        public void mousePressed(MouseEvent e) 
+        {
+            if (SwingUtilities.isRightMouseButton(e)) 
+            {
+                int row = fileTree.getClosestRowForLocation(e.getX(), e.getY());
+                fileTree.setSelectionRow(row);
+                treePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+            }
+        }
+        });
+    }
+
+    private void createChildren(DefaultMutableTreeNode node, Elemento elemento) 
+    {
+        // Como ejemplo simple, crearemos subcarpetas y archivos de forma manual
+        List<Elemento> subElementos = createSubElementos(elemento);
+        for (Elemento subElemento : subElementos) 
+        {
+            DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(subElemento);
+            node.add(childNode);
+            if (subElemento.getTipo() == 'C') 
+            {
+                createChildren(childNode, subElemento);
+            }
+        }
+    }
+
+    private void initializeFileTable() 
+    {
+        tableModel = new DefaultTableModel();
+        tableModel.addColumn("Nombre");
+        tableModel.addColumn("Size");
+        tableModel.addColumn("Tipo");
+        tableModel.addColumn("Autor");
+        tableModel.addColumn("Fecha");
+        fileTable.setModel(tableModel);
+        
+         // Crear el popup menu
+        JPopupMenu tablePopupMenu = new JPopupMenu();
+        JMenuItem openItem = new JMenuItem("Copiar");
+        JMenuItem deleteItem = new JMenuItem("Pegar");
+        tablePopupMenu.add(openItem);
+        tablePopupMenu.add(deleteItem);
+
+        // Añadir mouse listener para mostrar el popup menu
+        fileTable.addMouseListener(new MouseAdapter() 
+        {
+            @Override
+            public void mousePressed(MouseEvent e) 
+            {
+                if (SwingUtilities.isRightMouseButton(e)) 
+                {
+                    int row = fileTable.rowAtPoint(e.getPoint());
+                    fileTable.setRowSelectionInterval(row, row);
+                    tablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        });
+    }
+
+    private void updateFileTable(Elemento carpeta) 
+    {
+        List<Elemento> archivos = createSubElementos(carpeta);
+        tableModel.setRowCount(0);
+        for (Elemento archivo : archivos) 
+        {
+            tableModel.addRow(new Object[]
+            {
+                archivo.getNombre(),
+                archivo.getTamanio(),
+                archivo.getExtencion(),
+                archivo.getAutor(),
+                archivo.getFecha()
+            });
+        }
+    }
+
+    private Elemento createSampleFileSystem() 
+    {
+        Elemento root = new Elemento("Root", "", 'C', 0, "C:\\Root");
+        return root;
+    }
+
+    // Subelementos
+    private List<Elemento> createSubElementos(Elemento elemento) 
+    {
+        mult.desp3(r);
+        return subElementos;
+    }
+
+    public static void main(String[] args) 
+    {
+        SwingUtilities.invokeLater(() -> 
+        {
+            new Explorador().setVisible(true);
+        });
+    }
+
+    public void cargaDatos() 
+    {
+        Altas alt = new Altas();
+        Bajas bj = new Bajas();
+        CopyPaste cp = new CopyPaste();
+
+        alt.altaRuta("C:", "C:", 0, 'c');
+        alt.altaRuta("C:", "Documentos", 0, 'c');
+        alt.altaRuta("C:/Documentos", "archivo.txt", 6, 'A');
+        alt.altaRuta("C:", "Descarga", 0, 'c');
+        alt.altaRuta("C:", "Musica", 0, 'c');
+        alt.altaRuta("C:/Musica", "PerdidoEnLaOscuridadJoseJose.mp3", 6, 'A');
+        alt.altaRuta("C:/Musica", "Carpeta_Sub", 6, 'c');
+        alt.altaRuta("C:/Musica/Carpeta_Sub", "Archivo_random.txt", 6, 'A');
+        alt.altaRuta("C:", "Escritorio", 0, 'c');
+        alt.altaRuta("C:/Escritorio", "ProyectoMauro.java", 6, 'A');
+        alt.altaRuta("C:/Descarga", "ARchivo2.txt", 6, 'A');
+        alt.altaRuta("C:/Documentos", "EDD", 0, 'c');
+        alt.altaRuta("C:", "Juegos", 0, 'c');
+
+        mult.desp(r, "1: ");
+        Nodo<Elemento> fileNode = mult.buscarNodo(r, "Archivo_random");
+        System.out.println(((Elemento) fileNode.getObj()).getRuta());
+        // mult.desp(fileNode, "---");
+
+        Nodo<Elemento> dirNode = mult.buscarNodo(r, "Juegos");
+        System.out.println(((Elemento) dirNode.getObj()).getRuta());
+        // mult.desp(dirNode, "**\t");
+        cp.copiar_archivo(((Elemento) fileNode.getObj()).getRuta(), "Archivo_random", ((Elemento) fileNode.getObj()).getExtencion());
+
+        cp.pegar_Archivo("C:/Juegos");
+
+        // cp.copiar_directorio(((Elemento) dirNode.getObj()).getRuta(), "Musica");
+        // cp.pegar_directorio("C:/Escritorio");
+
+        // Nodo<Elemento> fileNode = mult.buscarNodo(r, "Archivo_random");
+        System.out.println(((Elemento) fileNode.getObj()).getRuta());
+
+        // cp.copiar_directorio(((Elemento) dirNode.getObj()).getRuta(), "Archivo_random");
+        // cp.pegar_directorio("C:/Juegos");
+
+        mult.desp(r, "etq: ");
+
+        Elemento elemento = bj.bajaElimina("Archivo_random");
+        if (elemento != null) 
+        {
+            System.out.println("Elemento: " + elemento.getAutor());
+        } else 
+        {
+            System.out.println("No elimno el Elemento");
+        }
+
+        System.out.println("-----------------");
+
+        mult.desp(r, "etq: ");
+    }
+
+    public String extraerPalabraEntreParentesis(String texto) 
+    {
+        // Usamos una expresión regular para buscar contenido entre paréntesis
+        Pattern pattern = Pattern.compile("\\(([^)]+)\\)");
+        Matcher matcher = pattern.matcher(texto);
+        if (matcher.find()) 
+        {
+            // Retorna el primer grupo capturado, que es la palabra entre paréntesis
+            return matcher.group(1);
+        }
+        return null; // No se encontraron paréntesis con contenido
+    }
+
+    private void onSearchButtonClick() 
+    {
+        new Busqueda().setVisible(true);
+    }
+
+    private void onNewButtonClick() 
+    {
+        new Nuevo().setVisible(true);
+    }
+
+    private void onDeleteButtonClick() 
+    {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
-    static LinkedList id_soltados = new LinkedList();
-    private static int currentId = 1, currentLevel = 1;
-    public static Document arbol, arbolUsuarios;
-    public static Element currentDir, elementoaPegar, currentUser, usersContainer;
-    public static boolean estadoPegar = false;
-    
-    public static void inicializar(){
-      
-     
-    }
-
-    public static LinkedList getId_soltados() {
-        return id_soltados;
-    }
-
-    public static int getCurrentId() {
-        return currentId;
-    }
-
-    public static void setCurrentId(int aCurrentId) {
-        currentId = aCurrentId;
-    } 
-
-    public static int getCurrentLevel() {
-        return currentLevel;
-    }
-
-    public static void setCurrentLevel(int aCurrentLevel) {
-        currentLevel = aCurrentLevel;
-    }
-    
-    public void agregarDirectorio(){
-        
-    }
-
-    public static void main(String[] args) {
-        inicializar();      
-        
-        /*String[] nombres = {"Daniel", "Daniela"};
-        for(int i = 0; i < 60; i++){
-            Archivo a = new Archivo(i, "Archivo"+i, "Archivo", "Lorem", Math.random() < 0.5, Math.random() < 0.5, nombres[Math.round((float) Math.random())]);
-            a.agregar();
-        }      
-        for(int i = 60; i < 100; i++){
-            Directorio a = new Directorio(i, "Directorio"+i, "Directorio", Math.random() < 0.5, Math.random() < 0.5, nombres[Math.round((float) Math.random())]);
-            a.agregar();
-        }*/
-        
-        /*Archivo a3 = new Archivo(3, "Archivo3", "Archivo3", "Lorem");
-        a3.eliminar();
-        
-        Archivo a6 = new Archivo(6, "Archivo6", "Archivo6", "Lorem");
-        a6.agregar();*/
-        
-        /*Directorio d = new Directorio(25, "Directorio1", "Directorio");
-        d.eliminar();
-        Directorio d1 = new Directorio(25, "Directorio4", "Directorio");
-        d1.agregar();*/
-        
-        //Interfaz i = new Interfaz();
-        //InterfazInicio i = new InterfazInicio();
-        //InterfazRegistro i = new InterfazRegistro();
-        //InterfazCrearElemento i = new InterfazCrearElemento();
-        
-        
-        Interfaz i = new Interfaz();
-    }  
 }
+

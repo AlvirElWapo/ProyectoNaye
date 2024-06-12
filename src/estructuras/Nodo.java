@@ -4,12 +4,14 @@
  * and open the template in the editor.
  */
 package estructuras;
+
 /**
  *
  * @author Nayeli
  */
-public class Nodo <T>
+public class Nodo<T>
 {
+
     private T obj;
     private String etq;
     private Nodo sig, ant, abj, arb;
@@ -20,9 +22,10 @@ public class Nodo <T>
         this.etq = etq;
         sig = null;
         ant = null;
-        abj = null; 
+        abj = null;
         arb = null;
     }
+
     /**
      * @return the obj
      */
@@ -90,7 +93,7 @@ public class Nodo <T>
     /**
      * @return the abj
      */
-    public Nodo getAbj() 
+    public Nodo getAbj()
     {
         return abj;
     }
@@ -98,22 +101,24 @@ public class Nodo <T>
     /**
      * @param abj the abj to set
      */
-    public void setAbj(Nodo abj) 
+    public void setAbj(Nodo abj)
     {
         this.abj = abj;
-    } 
+    }
 
     /**
      * @return the arb
      */
-    public Nodo getArb() {
+    public Nodo getArb()
+    {
         return arb;
     }
 
     /**
      * @param arb the arb to set
      */
-    public void setArb(Nodo arb) {
+    public void setArb(Nodo arb)
+    {
         this.arb = arb;
     }
 }

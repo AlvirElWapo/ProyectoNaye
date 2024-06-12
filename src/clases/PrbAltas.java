@@ -7,6 +7,8 @@ package clases;
 import estructuras.Multilista;
 import estructuras.Nodo;
 import clases.*;
+import estructuras.NodoArbol;
+import estructuras.TablaHash;
 
 /**
  *
@@ -16,6 +18,8 @@ public class PrbAltas
 {
     public static Nodo r = null;
     public static  Multilista mult = new Multilista();
+    public static TablaHash th = new TablaHash();
+    
     /**
      * @param args the command line arguments
      */
@@ -38,19 +42,19 @@ public class PrbAltas
        alt.altaRuta("C:/Escritorio", "ProyectoMauro.java", 6, 'A');
        alt.altaRuta("C:/Descarga", "ARchivo2.txt", 6, 'A');
        alt.altaRuta("C:/Documentos", "EDD", 0, 'c');
-       mult.desp(r, "1: ");
+
             Nodo<Elemento> fileNode = mult.buscarNodo(r, "ARchivo2");
             System.out.println(((Elemento)fileNode.getObj()).getRuta());
             //mult.desp(fileNode, "---");
             Nodo<Elemento> dirNode = mult.buscarNodo(r, "Musica"); 
             System.out.println(((Elemento)dirNode.getObj()).getRuta());
             //mult.desp(dirNode, "**\t");
-            cp.Copiar_archivo(((Elemento)fileNode.getObj()).getRuta(), "ARchivo2",((Elemento)fileNode.getObj()).getExtencion());
+            cp.copiar_archivo(((Elemento)fileNode.getObj()).getRuta(), "ARchivo2",((Elemento)fileNode.getObj()).getExtencion());
             
-            cp.Pegar_Archivo("C:/Musica/Carpeta_Sub");
+            cp.pegar_Archivo("C:/Musica/Carpeta_Sub");
             
-            cp.Copiar_directorio(((Elemento)dirNode.getObj()).getRuta(), "Musica");
-            cp.Pegar_directorio("C:/Escritorio");
+            cp.copiar_directorio(((Elemento)dirNode.getObj()).getRuta(), "Musica");
+            cp.pegar_directorio("C:/Escritorio");
         mult.desp(r, "etq: ");
 
        Elemento elemento = bj.bajaElimina("Archivo_random");
@@ -63,5 +67,22 @@ public class PrbAltas
         System.out.println("-----------------");
        
         mult.desp(r,"etq: ");
+        
+        
+        System.out.println("----Busqueda de en tablas hash ------");
+        NodoArbol nodoBusqueda=th.busca("Musica");
+        Nodo nodo=(Nodo)nodoBusqueda.getObj();
+        System.out.println("Elemento: "+nodo.getEtq());
+        
+        Elemento ele= (Elemento) nodo.getObj();
+        
+        if (ele!=null)
+        {
+            System.out.println("Autor: "+ele.getAutor());
+        } else
+        {
+            System.out.println("NO hay datos");
+        }
+        
      }
 }

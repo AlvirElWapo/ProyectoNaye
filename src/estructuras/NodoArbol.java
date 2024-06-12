@@ -7,7 +7,7 @@ package estructuras;
 
 /**
  *
- * @author chenc
+ * @author Manuel
  */
 public class NodoArbol
 {

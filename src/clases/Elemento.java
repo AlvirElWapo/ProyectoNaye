@@ -8,7 +8,7 @@ import java.util.Date;
 
 /**
  *
- * @author Nayeli
+ * @author Manuel
  */
 public class Elemento 
 {

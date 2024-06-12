@@ -10,51 +10,52 @@ import estructuras.*;
 import static clases.PrbAltas.r;
 import static clases.PrbAltas.mult;
 
-public class CopyPaste {
+public class CopyPaste 
+{
+    //Atributos privados para almacenar información
     private String clipboard;
     private String clipboard_fullpath;
     private Nodo clipboard_Directorio;
     private String clipboard_nombre_Directorio;
 
-    public CopyPaste() {
+    public CopyPaste() 
+    {
         this.clipboard = "";
         this.clipboard_fullpath = "";
     }
 
- public void Copiar_archivo(String fullPath, String fileName, String file_ext) 
- {
-    this.clipboard_fullpath = fullPath; 
-    this.clipboard = fileName+"."+file_ext;
-    System.out.println("ARCHIVO COPIADO: " + fullPath +"/"+ fileName +"."+ file_ext);
- }
- 
- public void Pegar_Archivo(String objetivo){
-     
-     Altas alt = new Altas();
-     alt.altaRuta(objetivo, clipboard, 6, 'A');
- }
- 
- public void Copiar_directorio(String fullPath, String dirName) 
- {
-     System.out.println("COPIANDO DIRECTORIO: " + fullPath + "/" + dirName);
-     this.clipboard_nombre_Directorio = dirName;
-     this.clipboard_Directorio = mult.buscarNodo2(r, dirName);
- }
- 
- public void Pegar_directorio(String ruta_objetivo){
-     Altas alt = new Altas();
-     String newname = "copy-"+clipboard_nombre_Directorio;
-     System.out.println(newname);
-     System.out.println(ruta_objetivo);
-     alt.altaRuta(ruta_objetivo, newname, 0, 'c');
-     //alt.altaRuta(newname, ruta_objetivo, 0, 'c');
-     alt.altaRuta_Nodo(ruta_objetivo+"/"+newname, this.clipboard_nombre_Directorio, this.clipboard_Directorio);
- }
- 
- 
- 
- 
- 
+    public void copiar_archivo(String fullPath, String fileName, String file_ext) 
+    {
+        //pasa a portapapeles
+       this.clipboard_fullpath = fullPath; 
+       this.clipboard = fileName+"."+file_ext;
+       System.out.println("ARCHIVO COPIADO: " + fullPath +"/"+ fileName +"."+ file_ext);
+    }
+
+    public void pegar_Archivo(String objetivo)
+    {
+        Altas alt = new Altas();
+        alt.altaRuta(objetivo, clipboard, 6, 'A');
+    }
+
+    public void copiar_directorio(String fullPath, String dirName) 
+    {
+        System.out.println("COPIANDO DIRECTORIO: " + fullPath + "/" + dirName);
+        //almacena el nombre del directorio y busca el nodo correspondient
+        this.clipboard_nombre_Directorio = dirName;
+        this.clipboard_Directorio = mult.buscarNodo2(r, dirName);
+    }
+
+    public void pegar_directorio(String ruta_objetivo)
+    {
+        Altas alt = new Altas();
+        //Se inserta el nodo inicial o la carpeta
+        System.out.println(clipboard_nombre_Directorio);
+        System.out.println(ruta_objetivo);
+        //alt.altaRuta("(Copy)"+clipboard_nombre_Directorio, ruta_objetivo, 0, 'c');
+        alt.altaRuta_Nodo(ruta_objetivo, this.clipboard_nombre_Directorio, this.clipboard_Directorio);
+
+    }
 }
 
  

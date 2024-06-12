@@ -7,7 +7,7 @@ package estructuras;
 
 /**
  *
- * @author chenc
+ * @author Nayeli
  */
 public class PrbTablasHash
 {
