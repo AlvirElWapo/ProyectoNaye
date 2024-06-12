@@ -186,9 +186,6 @@ public class Explorador extends JFrame
 	{
 
         public void actionPerformed(ActionEvent e) {
-            int row = fileTable.getSelectedRow();
-            if (row != -1) 
-	    {
 		Nodo nodo_encontrado = mult.buscarNodo(r, identifier);
 		String ruta = ((Elemento)nodo_encontrado.getObj()).getRuta();
 		String nombre = ((Elemento)nodo_encontrado.getObj()).getNombre();
@@ -201,10 +198,8 @@ public class Explorador extends JFrame
 		{
 		    cp.copiar_archivo(ruta, nombre, extencion);
 		}else{
-		    cp.copiar_directorio(ruta, nombre);
+		    cp.copiar_directorio(identifier);
 		}
-            }
-
         }
 
 	});
@@ -212,10 +207,6 @@ public class Explorador extends JFrame
 	pasteItem.addActionListener(new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
-            int row = fileTable.getSelectedRow();
-            if (row != -1) {
-                System.out.println("Pegar archivo: " + tableModel.getValueAt(row, 0));
-            }
 	    System.out.println("@@@@@@@@@@@@@@@@@@@@"+identifier);
 	    Nodo nodo_encontrado = mult.buscarNodo(r, identifier);
 	    if(nodo_encontrado != null){
@@ -223,12 +214,11 @@ public class Explorador extends JFrame
 		    String nombre = ((Elemento)nodo_encontrado.getObj()).getNombre();
 	    System.out.println(ruta);
 	    if(cp.directorio_o_archivo){
-		    System.out.println("PEGANDO EN: " + ruta+"/"+nombre);
-		    cp.pegar_directorio(ruta+"/"+nombre);
-		    mult.desp(r,"pegado:");
+		    cp.pegar_directorio(ruta);
+		    mult.desp(r,"pegado DIR:");
 	    }else{
-		    cp.pegar_Archivo(ruta);
-		    mult.desp(r,"pegado:");
+		    cp.pegar_Archivo(ruta+"/"+nombre);
+		    mult.desp(r,"pegado ARCH:");
 	    }
 	    }
 	    
@@ -289,7 +279,7 @@ private void initializeFileTable()
 		{
 		    cp.copiar_archivo(ruta, nombre, extencion);
 		}else{
-			cp.copiar_directorio(ruta, nombre);
+			cp.copiar_directorio( nombre);
 		}
             }
 

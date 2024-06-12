@@ -53,7 +53,7 @@ public class PrbAltas
             
             cp.pegar_Archivo("C:/Musica/Carpeta_Sub");
             
-            cp.copiar_directorio(((Elemento)dirNode.getObj()).getRuta(), "Musica");
+            //cp.copiar_directorio(((Elemento)dirNode.getObj()).getRuta(), "Musica");
             cp.pegar_directorio("C:/Escritorio");
         mult.desp(r, "etq: ");
 
