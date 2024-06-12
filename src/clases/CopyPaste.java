@@ -17,6 +17,8 @@ public class CopyPaste
     private String clipboard_fullpath;
     private Nodo clipboard_Directorio;
     private String clipboard_nombre_Directorio;
+    // archivo = false   // directorio = true
+    public boolean directorio_o_archivo;
 
     public CopyPaste() 
     {
@@ -29,6 +31,7 @@ public class CopyPaste
         //pasa a portapapeles
        this.clipboard_fullpath = fullPath; 
        this.clipboard = fileName+"."+file_ext;
+       this.directorio_o_archivo = false;
        System.out.println("ARCHIVO COPIADO: " + fullPath +"/"+ fileName +"."+ file_ext);
     }
 
@@ -40,8 +43,9 @@ public class CopyPaste
 
     public void copiar_directorio(String fullPath, String dirName) 
     {
-        System.out.println("COPIANDO DIRECTORIO: " + fullPath + "/" + dirName);
+        System.out.println("COPIANDO DIRECTORIO:" + dirName);
         //almacena el nombre del directorio y busca el nodo correspondient
+	this.directorio_o_archivo = true;
         this.clipboard_nombre_Directorio = dirName;
         this.clipboard_Directorio = mult.buscarNodo2(r, dirName);
     }
@@ -58,33 +62,3 @@ public class CopyPaste
     }
 }
 
- 
-// public void Copiar_Directorio()
-////Pendiente
-//    private void copyDirectoryContents(Nodo<Elemento> directory) {
-//        if (directory != null) {
-//            clipboardContents.add((Elemento) directory.getObj());
-//            Nodo<Elemento> child = directory.getSig(); 
-//            while (child != null) {
-//                copyDirectoryContents(child);
-//                child = child.getAbj(); // move to the next sibling
-//            }
-//        }
-//    }
-
-    
-//En prueba con Archivos por ahora
-//    public void Pegar(Altas alt, String Directorio_Actual, char tipo_archivo) {
-//    for (Elemento elem : clipboardContents) {
-//        String ruta;
-//
-//        // Construct the destination path based on the original path relative to the clipboard root
-//        String originalPath = elem.getRuta();
-//        String relativePath = originalPath.substring(originalPath.indexOf("/") + 1); // Remove the root directory from the path
-//        ruta = Directorio_Actual + "/" + relativePath;
-//
-//        alt.altaRuta(ruta, elem.getNombre(), elem.getTamanio(), elem.getTipo());
-//   }
-//    }
-
-//}

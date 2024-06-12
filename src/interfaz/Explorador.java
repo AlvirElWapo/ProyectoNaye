@@ -36,6 +36,7 @@ public class Explorador extends JFrame
     public static Multilista mult = new Multilista();
     public static List<Elemento> subElementos = new ArrayList<>();
     public static TablaHash th = new TablaHash();
+    public static CopyPaste cp = new CopyPaste();
 
     public Explorador() 
     {
@@ -127,9 +128,11 @@ public class Explorador extends JFrame
         pack();
     }
 
+    
+    
+    private String identifier;
     private void initializeFileTree() 
     {
-        
         Elemento rootElemento = createSampleFileSystem(); // Método para crear un sistema de archivos de ejemplo
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootElemento);
         createChildren(root, rootElemento);
@@ -137,10 +140,10 @@ public class Explorador extends JFrame
         
         // Crear el popup menu
         JPopupMenu treePopupMenu = new JPopupMenu();
-        JMenuItem copy = new JMenuItem("Copiar");
-        JMenuItem paste = new JMenuItem("Pegar");
-        treePopupMenu.add(copy);
-        treePopupMenu.add(paste);
+        JMenuItem copyItem = new JMenuItem("Copiar");
+        JMenuItem pasteItem = new JMenuItem("Pegar");
+        treePopupMenu.add(copyItem);
+        treePopupMenu.add(pasteItem);
         
         fileTree.addTreeSelectionListener(new TreeSelectionListener() 
         {
@@ -152,7 +155,6 @@ public class Explorador extends JFrame
                 {
                     // Aquí poner lógica para desplegar lo de las carpetas
                     tableModel.setRowCount(0);
-                    System.out.println("nombre " + extraerPalabraEntreParentesis(selectedNode.toString()));
                     Nodo nuevo = mult.buscarNodo2(r, extraerPalabraEntreParentesis(selectedNode.toString()));
                     mult.desp5(nuevo, tableModel);
                 }
@@ -160,18 +162,82 @@ public class Explorador extends JFrame
         });
         
         fileTree.addMouseListener(new MouseAdapter() 
-        {
-        @Override
-        public void mousePressed(MouseEvent e) 
-        {
-            if (SwingUtilities.isRightMouseButton(e)) 
-            {
-                int row = fileTree.getClosestRowForLocation(e.getX(), e.getY());
-		    System.out.println(fileTree.getPathForRow(row));
-                treePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+	{
+		@Override
+		public void mousePressed(MouseEvent e) 
+		{
+			if (SwingUtilities.isRightMouseButton(e)) 
+			{
+				int row = fileTree.getClosestRowForLocation(e.getX(), e.getY());
+				fileTree.setSelectionRow(row);  // Select the closest row
+				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) fileTree.getLastSelectedPathComponent();
+            
+				if (selectedNode != null) 
+				{
+					identifier = selectedNode.getUserObject().toString();
+					identifier = extraerPalabraEntreParentesis(identifier);
+					treePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+		}
+	});
+	
+	copyItem.addActionListener(new ActionListener() 
+	{
+
+        public void actionPerformed(ActionEvent e) {
+            int row = fileTable.getSelectedRow();
+            if (row != -1) 
+	    {
+		Nodo nodo_encontrado = mult.buscarNodo(r, identifier);
+		String ruta = ((Elemento)nodo_encontrado.getObj()).getRuta();
+		String nombre = ((Elemento)nodo_encontrado.getObj()).getNombre();
+		String extencion = ((Elemento)nodo_encontrado.getObj()).getExtencion();
+		    System.out.println(ruta);
+		    System.out.println(nombre);
+		    System.out.println(extencion);
+		
+		if(  ((Elemento)nodo_encontrado.getObj()).getTipo() == 'A' )
+		{
+		    cp.copiar_archivo(ruta, nombre, extencion);
+		}else{
+		    cp.copiar_directorio(ruta, nombre);
+		}
             }
+
         }
-        });
+
+	});
+	
+	pasteItem.addActionListener(new ActionListener() {
+
+        public void actionPerformed(ActionEvent e) {
+            int row = fileTable.getSelectedRow();
+            if (row != -1) {
+                System.out.println("Pegar archivo: " + tableModel.getValueAt(row, 0));
+            }
+	    System.out.println("@@@@@@@@@@@@@@@@@@@@"+identifier);
+	    Nodo nodo_encontrado = mult.buscarNodo(r, identifier);
+	    if(nodo_encontrado != null){
+		    String ruta = ((Elemento)nodo_encontrado.getObj()).getRuta();
+		    String nombre = ((Elemento)nodo_encontrado.getObj()).getNombre();
+	    System.out.println(ruta);
+	    if(cp.directorio_o_archivo){
+		    System.out.println("PEGANDO EN: " + ruta+"/"+nombre);
+		    cp.pegar_directorio(ruta+"/"+nombre);
+		    mult.desp(r,"pegado:");
+	    }else{
+		    cp.pegar_Archivo(ruta);
+		    mult.desp(r,"pegado:");
+	    }
+	    }
+	    
+        }
+    });
+	
+	
+	
+	
     }
 
     private void createChildren(DefaultMutableTreeNode node, Elemento elemento) 
@@ -191,67 +257,62 @@ public class Explorador extends JFrame
 
 private void initializeFileTable() 
 {
-
     tableModel = new DefaultTableModel();
-
     tableModel.addColumn("Nombre");
-
     tableModel.addColumn("Size");
-
     tableModel.addColumn("Tipo");
-
     tableModel.addColumn("Autor");
-
     tableModel.addColumn("Fecha");
-
     fileTable.setModel(tableModel);
- 
     // Crear el popup menu
-
     JPopupMenu tablePopupMenu = new JPopupMenu();
-
-    JMenuItem openItem = new JMenuItem("Abrir");
-
-    JMenuItem deleteItem = new JMenuItem("Eliminar");
-
-    tablePopupMenu.add(openItem);
-
-    tablePopupMenu.add(deleteItem);
- 
-    openItem.addActionListener(new ActionListener() {
+    JMenuItem copyItem = new JMenuItem("Copiar");
+    JMenuItem pasteItem = new JMenuItem("Pegar");
+    tablePopupMenu.add(copyItem);
+    tablePopupMenu.add(pasteItem);
+    
+    
+    
+    copyItem.addActionListener(new ActionListener() 
+    {
 
         public void actionPerformed(ActionEvent e) {
-
-            // Código para abrir archivo
-
             int row = fileTable.getSelectedRow();
-
-            if (row != -1) {
-
-                System.out.println("Abrir archivo: " + tableModel.getValueAt(row, 0));
-
+            if (row != -1) 
+	    {
+		Nodo nodo_encontrado = mult.buscarNodo(r, (String)tableModel.getValueAt(row, 0));
+		String ruta = ((Elemento)nodo_encontrado.getObj()).getRuta();
+		String nombre = ((Elemento)nodo_encontrado.getObj()).getNombre();
+		String extencion = ((Elemento)nodo_encontrado.getObj()).getExtencion();
+		
+		if(  ((Elemento)nodo_encontrado.getObj()).getTipo() == 'A' )
+		{
+		    cp.copiar_archivo(ruta, nombre, extencion);
+		}else{
+			cp.copiar_directorio(ruta, nombre);
+		}
             }
 
         }
 
     });
  
-    deleteItem.addActionListener(new ActionListener() {
+    pasteItem.addActionListener(new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
-
-            // Código para eliminar archivo
-
             int row = fileTable.getSelectedRow();
-
             if (row != -1) {
-
-                System.out.println("Eliminar archivo: " + tableModel.getValueAt(row, 0));
-
+                System.out.println("Pegar archivo: " + tableModel.getValueAt(row, 0));
             }
-
+	    Nodo nodo_encontrado = mult.buscarNodo(r, (String)tableModel.getValueAt(row, 0));
+	    String ruta = ((Elemento)nodo_encontrado.getObj()).getRuta();
+	    System.out.println(ruta);
+	    if(cp.directorio_o_archivo){
+		    cp.pegar_directorio(ruta);
+	    }else{
+		    cp.pegar_Archivo(ruta);
+	    }
         }
-
     });
  
     // Añadir mouse listener para mostrar el popup menu
