@@ -128,6 +128,7 @@ public class Explorador extends JFrame
 
     private void initializeFileTree() 
     {
+        
         Elemento rootElemento = createSampleFileSystem(); // Método para crear un sistema de archivos de ejemplo
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootElemento);
         createChildren(root, rootElemento);
@@ -246,7 +247,8 @@ public class Explorador extends JFrame
     // Subelementos
     private List<Elemento> createSubElementos(Elemento elemento) 
     {
-        mult.desp3(r);
+	subElementos = new ArrayList<>();
+	mult.desp3(r);
         return subElementos;
     }
 
@@ -297,7 +299,6 @@ public class Explorador extends JFrame
     private void onSearchButtonClick() 
     {
         new Busqueda().setVisible(true);
-        this.dispose();
     }
 
     private void onNewButtonClick() 

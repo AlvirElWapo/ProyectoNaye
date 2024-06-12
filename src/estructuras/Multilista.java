@@ -317,45 +317,22 @@ public class Multilista<T>
     }
     
 public void desp3(Nodo r)
+{
+            r = r.getAbj();
 
-    {
-
-        r = r.getAbj();
-
-        if (r == null)
-
-        {
-
-            return;
-
-        }
+        if (r == null){return;}
  
         Nodo start = r;
-
         do
-
         {
-
-//            Elemento elemento=(Elemento)r.getObj();
-
-//            System.out.println("Autor: "+elemento.getAutor());
-
-//            System.out.println("Ruta: "+elemento.getRuta());
-
-            System.out.println(r.getEtq());
             subElementos.add((Elemento)r.getObj());
             r = r.getSig();
-
             if (r == start)
-
             {
-
                 return;  // Salir si se detecta un ciclo
-
             }
 
         } while (r != start && r != null);  // Continuar mientras no se regrese al inicio o se encuentre un nodo nulo
-
     }
 
 public void desp4(Nodo r,DefaultTableModel tableModel)
