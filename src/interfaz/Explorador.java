@@ -4,6 +4,7 @@ import clases.Altas;
 import clases.Bajas;
 import clases.CopyPaste;
 import clases.Elemento;
+import com.sun.source.util.TreePath;
 import estructuras.Multilista;
 import estructuras.Nodo;
 import estructuras.TablaHash;
@@ -166,7 +167,7 @@ public class Explorador extends JFrame
             if (SwingUtilities.isRightMouseButton(e)) 
             {
                 int row = fileTree.getClosestRowForLocation(e.getX(), e.getY());
-                fileTree.setSelectionRow(row);
+		    System.out.println(fileTree.getPathForRow(row));
                 treePopupMenu.show(e.getComponent(), e.getX(), e.getY());
             }
         }
@@ -188,38 +189,94 @@ public class Explorador extends JFrame
         }
     }
 
-    private void initializeFileTable() 
-    {
-        tableModel = new DefaultTableModel();
-        tableModel.addColumn("Nombre");
-        tableModel.addColumn("Size");
-        tableModel.addColumn("Tipo");
-        tableModel.addColumn("Autor");
-        tableModel.addColumn("Fecha");
-        fileTable.setModel(tableModel);
-        
-         // Crear el popup menu
-        JPopupMenu tablePopupMenu = new JPopupMenu();
-        JMenuItem openItem = new JMenuItem("Copiar");
-        JMenuItem deleteItem = new JMenuItem("Pegar");
-        tablePopupMenu.add(openItem);
-        tablePopupMenu.add(deleteItem);
+private void initializeFileTable() 
+{
 
-        // Añadir mouse listener para mostrar el popup menu
-        fileTable.addMouseListener(new MouseAdapter() 
-        {
-            @Override
-            public void mousePressed(MouseEvent e) 
-            {
-                if (SwingUtilities.isRightMouseButton(e)) 
-                {
-                    int row = fileTable.rowAtPoint(e.getPoint());
-                    fileTable.setRowSelectionInterval(row, row);
-                    tablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
-                }
+    tableModel = new DefaultTableModel();
+
+    tableModel.addColumn("Nombre");
+
+    tableModel.addColumn("Size");
+
+    tableModel.addColumn("Tipo");
+
+    tableModel.addColumn("Autor");
+
+    tableModel.addColumn("Fecha");
+
+    fileTable.setModel(tableModel);
+ 
+    // Crear el popup menu
+
+    JPopupMenu tablePopupMenu = new JPopupMenu();
+
+    JMenuItem openItem = new JMenuItem("Abrir");
+
+    JMenuItem deleteItem = new JMenuItem("Eliminar");
+
+    tablePopupMenu.add(openItem);
+
+    tablePopupMenu.add(deleteItem);
+ 
+    openItem.addActionListener(new ActionListener() {
+
+        public void actionPerformed(ActionEvent e) {
+
+            // Código para abrir archivo
+
+            int row = fileTable.getSelectedRow();
+
+            if (row != -1) {
+
+                System.out.println("Abrir archivo: " + tableModel.getValueAt(row, 0));
+
             }
-        });
-    }
+
+        }
+
+    });
+ 
+    deleteItem.addActionListener(new ActionListener() {
+
+        public void actionPerformed(ActionEvent e) {
+
+            // Código para eliminar archivo
+
+            int row = fileTable.getSelectedRow();
+
+            if (row != -1) {
+
+                System.out.println("Eliminar archivo: " + tableModel.getValueAt(row, 0));
+
+            }
+
+        }
+
+    });
+ 
+    // Añadir mouse listener para mostrar el popup menu
+
+    fileTable.addMouseListener(new MouseAdapter() {
+
+        @Override
+
+        public void mousePressed(MouseEvent e) {
+
+            if (SwingUtilities.isRightMouseButton(e)) {
+
+                int row = fileTable.rowAtPoint(e.getPoint());
+
+                fileTable.setRowSelectionInterval(row, row);
+
+                tablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+
+            }
+
+        }
+
+    });
+
+}
 
     private void updateFileTable(Elemento carpeta) 
     {
