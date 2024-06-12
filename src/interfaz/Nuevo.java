@@ -119,6 +119,9 @@ public class Nuevo extends javax.swing.JFrame {
             
             // Aquí puedes agregar el código para manejar la creación del archivo o carpeta
             jLabel5.setText("Elemento creado exitosamente.");
+            this.dispose();
+            new Explorador().setVisible(true);
+            
         } else {
             jLabel5.setText("Todos los campos son obligatorios.");
         }

@@ -331,11 +331,13 @@ public class Explorador extends JFrame
     private void onSearchButtonClick() 
     {
         new Busqueda().setVisible(true);
+        this.dispose();
     }
 
     private void onNewButtonClick() 
     {
         new Nuevo().setVisible(true);
+        this.dispose();
     }
 
     private void onDeleteButtonClick() 
