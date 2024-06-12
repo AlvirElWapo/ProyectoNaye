@@ -115,7 +115,7 @@ public class Nuevo extends javax.swing.JFrame {
         if (!ruta.isEmpty() && !nombre.isEmpty() && !tamanio.isEmpty() && (tipo.equals("c - Carpeta") || !extension.isEmpty())) 
         {
             Altas alta = new Altas();
-            alta.altaRuta(ruta, nombre,Integer.valueOf(tamanio),tipo.charAt(0));
+            alta.altaRuta(ruta, nombre+extension,Integer.valueOf(tamanio),tipo.charAt(0));
             
             // Aquí puedes agregar el código para manejar la creación del archivo o carpeta
             jLabel5.setText("Elemento creado exitosamente.");
