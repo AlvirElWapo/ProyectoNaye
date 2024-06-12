@@ -69,13 +69,12 @@ public class Altas
     {
     if (!ruta.isEmpty()) 
     {
-
+	    
         String autor = System.getProperty("user.name");
         String[] partesRuta = ruta.split("/");
         
         //Elemento nElemento = new Elemento(nombre, extension, tipo, tamanio, ruta);
         Nodo nuevoNodo = nod;
-        
         //Nodo busca = mult.busca(r, nombre);
         if (r == null) 
         {

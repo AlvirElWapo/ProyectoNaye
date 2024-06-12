@@ -43,14 +43,14 @@ public class CopyPaste
         this.clipboard_Directorio = mult.buscarNodo2(r, dirName);
     }
 
-    public void pegar_directorio(String ruta_objetivo)
+    public void pegar_directorio(String ruta_objetivo,String nombre)
     {
         Altas alt = new Altas();
         System.out.println(clipboard_nombre_Directorio);
-        System.out.println(ruta_objetivo);
-        alt.altaRuta("(Copy)"+clipboard_nombre_Directorio, ruta_objetivo, 0, 'c');
-        alt.altaRuta_Nodo(ruta_objetivo, "(Copy)"+this.clipboard_nombre_Directorio, this.clipboard_Directorio);
-
+        System.out.println("RutaObjetivoPEgarDirectorio"+ruta_objetivo);
+	String new_ruta_objetivo = ruta_objetivo+"/"+nombre;
+        alt.altaRuta(new_ruta_objetivo,clipboard_nombre_Directorio , 0, 'c');
+        alt.altaRuta_Nodo(new_ruta_objetivo+"/"+this.clipboard_nombre_Directorio, this.clipboard_nombre_Directorio, this.clipboard_Directorio);
     }
 }
 

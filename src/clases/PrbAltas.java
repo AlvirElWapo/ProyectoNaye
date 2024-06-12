@@ -54,7 +54,7 @@ public class PrbAltas
             cp.pegar_Archivo("C:/Musica/Carpeta_Sub");
             
             //cp.copiar_directorio(((Elemento)dirNode.getObj()).getRuta(), "Musica");
-            cp.pegar_directorio("C:/Escritorio");
+            cp.pegar_directorio("C:/Escritorio","nombre");
         mult.desp(r, "etq: ");
 
        Elemento elemento = bj.bajaElimina("Archivo_random");
