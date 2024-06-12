@@ -229,7 +229,7 @@ public class Multilista<T>
             if (resultado != null)
             {
                 //System.out.println("ENCONTRADO!!!: "+((Elemento)resultado.getObj()).getNombre());
-                System.out.println("ENCONTRADO EN !!!: " + ((Elemento) resultado.getAbj().getObj()).getRuta());
+                //System.out.println("ENCONTRADO EN !!!: " + ((Elemento) resultado.getAbj().getObj()).getRuta());
                 resultado = resultado.getAbj(); // Explora el nodo a pegar.
                 return resultado; // Si encontramos el nodo en los subniveles, lo retornamos
             }
