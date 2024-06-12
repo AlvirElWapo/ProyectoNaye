@@ -263,8 +263,8 @@ public class Explorador extends JFrame
         Altas alt = new Altas();
         Bajas bj = new Bajas();
         CopyPaste cp = new CopyPaste();
-
-        alt.altaRuta("C:", "C:", 0, 'c');
+        if(r == null){
+            alt.altaRuta("C:", "C:", 0, 'c');
         alt.altaRuta("C:", "Documentos", 0, 'c');
         alt.altaRuta("C:/Documentos", "archivo.txt", 6, 'A');
         alt.altaRuta("C:", "Descarga", 0, 'c');
@@ -277,42 +277,8 @@ public class Explorador extends JFrame
         alt.altaRuta("C:/Descarga", "ARchivo2.txt", 6, 'A');
         alt.altaRuta("C:/Documentos", "EDD", 0, 'c');
         alt.altaRuta("C:", "Juegos", 0, 'c');
-
-        mult.desp(r, "1: ");
-        Nodo<Elemento> fileNode = mult.buscarNodo(r, "Archivo_random");
-        System.out.println(((Elemento) fileNode.getObj()).getRuta());
-        // mult.desp(fileNode, "---");
-
-        Nodo<Elemento> dirNode = mult.buscarNodo(r, "Juegos");
-        System.out.println(((Elemento) dirNode.getObj()).getRuta());
-        // mult.desp(dirNode, "**\t");
-        cp.copiar_archivo(((Elemento) fileNode.getObj()).getRuta(), "Archivo_random", ((Elemento) fileNode.getObj()).getExtencion());
-
-        cp.pegar_Archivo("C:/Juegos");
-
-        // cp.copiar_directorio(((Elemento) dirNode.getObj()).getRuta(), "Musica");
-        // cp.pegar_directorio("C:/Escritorio");
-
-        // Nodo<Elemento> fileNode = mult.buscarNodo(r, "Archivo_random");
-        System.out.println(((Elemento) fileNode.getObj()).getRuta());
-
-        // cp.copiar_directorio(((Elemento) dirNode.getObj()).getRuta(), "Archivo_random");
-        // cp.pegar_directorio("C:/Juegos");
-
-        mult.desp(r, "etq: ");
-
-        Elemento elemento = bj.bajaElimina("Archivo_random");
-        if (elemento != null) 
-        {
-            System.out.println("Elemento: " + elemento.getAutor());
-        } else 
-        {
-            System.out.println("No elimno el Elemento");
         }
-
-        System.out.println("-----------------");
-
-        mult.desp(r, "etq: ");
+        mult.desp(r, "---: ");
     }
 
     public String extraerPalabraEntreParentesis(String texto) 
